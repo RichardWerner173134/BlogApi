@@ -13,7 +13,9 @@ public class DatabaseConfig {
     public DataSource getDataSource(){
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("org.postgresql.Driver");
-        dataSourceBuilder.url("jdbc:postgresql://nynbdauvzaoynt:9cd32be53ae2d8fdbc22f1c73ac70eac2b23603a9228266db8c41d5015c9db41@ec2-34-252-251-16.eu-west-1.compute.amazonaws.com:5432/d8o5mmqnlv2sl6");
+        dataSourceBuilder.url("jdbc:postgresql://ec2-54-72-155-238.eu-west-1.compute.amazonaws.com:5432/d674ucu32jic0n");
+        dataSourceBuilder.username("tlvtysxwueykoi");
+        dataSourceBuilder.password("3e6eb53f7bc505a3f53b1e873c7613a1838932cb7211adc03703ccb8df9d4aa8");
         return dataSourceBuilder.build();
     }
 }
