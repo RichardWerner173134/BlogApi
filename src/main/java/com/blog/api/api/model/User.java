@@ -19,11 +19,11 @@ import java.util.Set;
 @NoArgsConstructor
 public class User implements UserDetails {
     @Id
-    @Column
+    @Column(name="username")
     @Expose
     private String username;
 
-    @Column
+    @Column(name="password")
     private String password;
 
     @Column
@@ -39,7 +39,7 @@ public class User implements UserDetails {
     @Expose
     private byte[] profilBild;
 
-    @Column
+    @Column(name="auth")
     @Expose
     private String authorities;
 
