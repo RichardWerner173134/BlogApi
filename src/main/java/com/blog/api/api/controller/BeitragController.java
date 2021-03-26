@@ -34,7 +34,7 @@ public class BeitragController {
     @ResponseBody
     public String getBeitraege() {
         List<Beitrag> allBeitraege = beitragService.getAllBeitraege();
-        List<BeitragDAO> beitragDaoList = BeitragDAO.convertBeitragList(allBeitraege);
+        List<BeitragDAO> beitragDaoList = BeitragDAO.convertBeitragList(allBeitraege, beitragViewService);
         return new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
                 .create()

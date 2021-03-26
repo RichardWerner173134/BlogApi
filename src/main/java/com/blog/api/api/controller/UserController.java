@@ -1,6 +1,7 @@
 package com.blog.api.api.controller;
 
 import com.blog.api.api.model.User;
+import com.blog.api.api.service.BeitragViewService;
 import com.blog.api.api.service.UserService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;

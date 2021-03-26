@@ -1,6 +1,7 @@
 package com.blog.api.api.model.dao;
 
 import com.blog.api.api.model.Beitrag;
+import com.blog.api.api.service.BeitragViewService;
 import com.google.gson.annotations.Expose;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BeitragDAO {
+
     @Expose
     private Long id;
     @Expose
@@ -26,7 +28,7 @@ public class BeitragDAO {
     @Expose
     private int views;
 
-    public static List<BeitragDAO> convertBeitragList(List<Beitrag> beitragList){
+    public static List<BeitragDAO> convertBeitragList(List<Beitrag> beitragList, BeitragViewService beitragViewService){
         List<BeitragDAO> list = new ArrayList<>();
         for(Beitrag beitrag : beitragList){
             if(beitrag.getUsername() != null){
@@ -35,7 +37,7 @@ public class BeitragDAO {
                         beitrag.getTitle(),
                         beitrag.getContent(),
                         beitrag.getUsername().getUsername(),
-                        beitrag.getViews().size()
+                        beitragViewService.getViewsForBeitrag(beitrag.getId())
                 ));
             } else{
                 list.add(new BeitragDAO(
@@ -43,7 +45,7 @@ public class BeitragDAO {
                         beitrag.getTitle(),
                         beitrag.getContent(),
                         "Unbekannt",
-                        beitrag.getViews().size()
+                        beitragViewService.getViewsForBeitrag(beitrag.getId())
                 ));
             }
         }
