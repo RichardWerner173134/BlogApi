@@ -51,4 +51,18 @@ public class BeitragDAO {
         }
         return list;
     }
+
+    public static BeitragDAO convertBeitrag(Beitrag beitrag, BeitragViewService beitragViewService){
+        BeitragDAO beitragDao = new BeitragDAO();
+        beitragDao.setId(beitrag.getId());
+        beitragDao.setTitle(beitrag.getTitle());
+        beitragDao.setContent(beitrag.getContent());
+        beitragDao.setViews(beitragViewService.getViewsForBeitrag(beitrag.getId()));
+        if(beitrag.getUsername() != null){
+            beitragDao.setAuthor(beitrag.getUsername().getUsername());
+        } else{
+            beitragDao.setAuthor("Unbekannt");
+        }
+        return beitragDao;
+    }
 }

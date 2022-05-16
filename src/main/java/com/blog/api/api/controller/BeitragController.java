@@ -10,11 +10,15 @@ import com.blog.api.api.service.BeitragService;
 import com.blog.api.api.service.BeitragViewService;
 import com.blog.api.api.service.UserService;
 import com.google.gson.GsonBuilder;
+import org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,15 +34,20 @@ public class BeitragController {
     @Autowired
     private BeitragViewService beitragViewService;
 
-    @RequestMapping(value = "/beitraege", produces = "application/json", method = RequestMethod.GET)
+    @Autowired
+    private DataSource ds;
+
+    @RequestMapping(value = "/beitraege", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getBeitraege() {
+    public ResponseEntity getBeitraege() {
         List<Beitrag> allBeitraege = beitragService.getAllBeitraege();
         List<BeitragDAO> beitragDaoList = BeitragDAO.convertBeitragList(allBeitraege, beitragViewService);
-        return new GsonBuilder()
+        String body = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
                 .create()
                 .toJson(beitragDaoList);
+
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/addBeitrag", method = RequestMethod.POST)
@@ -79,5 +88,22 @@ public class BeitragController {
         return ResponseEntity.ok().build();
     }
 
+    @RequestMapping(value = "/beitraege/{beitragId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getBeitragById(@PathVariable Long beitragId){
+        Optional<Beitrag> beitrag = this.beitragService.getBeitragById(beitragId);
+
+        if(!beitrag.isPresent()){
+            return ResponseEntity.noContent().build();
+        }
+
+        BeitragDAO beitragDAO = BeitragDAO.convertBeitrag(beitrag.get(), beitragViewService);
+
+        String body = new GsonBuilder()
+                .excludeFieldsWithoutExposeAnnotation()
+                .create()
+                .toJson(beitragDAO);
+
+        return new ResponseEntity<>(body, HttpStatus.OK);
+    }
 
 }

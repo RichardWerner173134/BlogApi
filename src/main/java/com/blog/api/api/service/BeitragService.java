@@ -19,6 +19,10 @@ public class BeitragService {
         return beitragRepository.findAll();
     }
 
+    public Optional<Beitrag> getBeitragById(Long id){
+        return beitragRepository.findById(id);
+    }
+
     public void addBeitrag(Beitrag beitrag) {
         beitragRepository.save(beitrag);
     }
