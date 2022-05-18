@@ -38,6 +38,7 @@ public class SecurityController {
     @PostMapping(value = "/authenticate")
     @ResponseBody
     public String authentiate(@RequestBody AuthenticationRequest request) throws Exception {
+        // TODO logging
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(

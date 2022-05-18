@@ -11,6 +11,8 @@ import com.blog.api.api.service.BeitragViewService;
 import com.blog.api.api.service.UserService;
 import com.google.gson.GsonBuilder;
 import org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,6 +26,8 @@ import java.util.Optional;
 
 @RestController
 public class BeitragController {
+
+    Logger logger = LoggerFactory.getLogger(BeitragController.class);
 
     @Autowired
     private BeitragService beitragService;
@@ -40,6 +44,8 @@ public class BeitragController {
     @RequestMapping(value = "/beitraege", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity getBeitraege() {
+        logger.info("GET - /beitraege");
+
         List<Beitrag> allBeitraege = beitragService.getAllBeitraege();
         List<BeitragDAO> beitragDaoList = BeitragDAO.convertBeitragList(allBeitraege, beitragViewService);
         String body = new GsonBuilder()
@@ -52,6 +58,7 @@ public class BeitragController {
 
     @RequestMapping(value = "/addBeitrag", method = RequestMethod.POST)
     public ResponseEntity addBeitrag(@Validated @RequestBody BeitragAddRequest request) {
+        logger.info(String.format("POST - /addBeitrag, \n\tauthor: %s,\n\ttitle: %s,\n\tcontent: %s,\n\tviews: %d", request.getAuthor(), request.getTitle(), request.getContent(), request.getViews()));
         try {
             request.setUserService(userService);
             Beitrag beitrag = request.convertToBeitrag();
@@ -64,6 +71,7 @@ public class BeitragController {
 
     @RequestMapping(value = "/beitraege/{beitragId}/addView", method = RequestMethod.POST)
     public ResponseEntity addView(@PathVariable int beitragId, @RequestBody BeitragViewIncreaseRequest request) throws Exception {
+        logger.info(String.format("POST - \n\tuser: %s,\n\tdate: %t", request.getUser(), request.getDate()));
         BeitragView beitragView = new BeitragView();
 
         String reqUsername = request.getUser();
@@ -90,6 +98,8 @@ public class BeitragController {
 
     @RequestMapping(value = "/beitraege/{beitragId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getBeitragById(@PathVariable Long beitragId){
+        logger.info(String.format("GET - /beitrag/%d", beitragId));
+
         Optional<Beitrag> beitrag = this.beitragService.getBeitragById(beitragId);
 
         if(!beitrag.isPresent()){

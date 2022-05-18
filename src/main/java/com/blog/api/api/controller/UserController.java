@@ -22,6 +22,7 @@ public class UserController {
     @RequestMapping(value ="/users", method = RequestMethod.GET)
     @ResponseBody
     public String getAllUsers(){
+        // TODO logging
 
         return new Gson().toJson(userService.getAll());
     }
@@ -30,6 +31,7 @@ public class UserController {
             method = RequestMethod.GET,
             produces = MediaType.IMAGE_JPEG_VALUE)
     public Resource getProfilbild(@PathVariable String username){
+        // TODO logging
         Optional<User> user = userService.getUser(username);
         if(user.isPresent()){
             return new ByteArrayResource(user.get().getProfilBild());

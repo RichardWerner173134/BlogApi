@@ -23,7 +23,7 @@ public class Beitrag {
     private String title;
 
     @Expose
-    @Column
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String content;
 
     @ManyToOne

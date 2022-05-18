@@ -17,7 +17,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "\"User\"")
+@Table(name = "Blog_User")
 public class User implements UserDetails {
     @Id
     @Column(name="username")
