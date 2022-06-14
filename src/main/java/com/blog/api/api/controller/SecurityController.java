@@ -7,11 +7,16 @@ import com.blog.api.api.security.MyUserDetailsService;
 import com.blog.api.api.security.Role;
 import com.blog.api.api.service.UserService;
 import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -22,6 +27,8 @@ import java.util.Map;
 
 @RestController
 public class SecurityController {
+
+    Logger logger = LoggerFactory.getLogger(SecurityController.class);
 
     @Autowired
     private UserService userService;
@@ -37,7 +44,7 @@ public class SecurityController {
 
     @PostMapping(value = "/authenticate")
     @ResponseBody
-    public String authentiate(@RequestBody AuthenticationRequest request) throws Exception {
+    public ResponseEntity authenticate(@RequestBody AuthenticationRequest request) throws Exception {
         // TODO logging
         try {
             authenticationManager.authenticate(
@@ -47,19 +54,20 @@ public class SecurityController {
                     )
             );
         } catch (BadCredentialsException e) {
-            throw new Exception("Incorrect Username and Password");
+            logger.info("auth failed for [" + request.getUsername() + ", " + request.getPassword() + "]");
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
         }
 
         final UserDetails userdetails = myUserDetailsService.loadUserByUsername(request.getUsername());
         final String jwt = jwtUtil.generateToken(userdetails);
-
-        return new Gson().toJson(jwt);
+        final String body = new Gson().toJson(jwt);
+        logger.info("auth successful [" + request.getUsername() + ", " + request.getPassword() + "]");
+        return ResponseEntity.ok(body);
     }
 
     @RequestMapping(
             value = "/register",
-            method = RequestMethod.POST, consumes =
-            MediaType.MULTIPART_FORM_DATA_VALUE
+            method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
     public void register(MultipartHttpServletRequest request) throws Exception {
 
