@@ -45,7 +45,6 @@ public class SecurityController {
     @PostMapping(value = "/authenticate")
     @ResponseBody
     public ResponseEntity authenticate(@RequestBody AuthenticationRequest request) throws Exception {
-        // TODO logging
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -69,7 +68,7 @@ public class SecurityController {
             value = "/register",
             method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
-    public void register(MultipartHttpServletRequest request) throws Exception {
+    public ResponseEntity register(MultipartHttpServletRequest request) throws Exception {
 
         Iterator<Map.Entry<String, String[]>> iterator = request.getParameterMap().entrySet().iterator();
         User user = new User();
@@ -92,9 +91,7 @@ public class SecurityController {
             }
         }
 
-
         user.setProfilBild(request.getMultiFileMap().getFirst("profilbild").getBytes());
-
 
         if(!userService.isUserPresent(user)){
             user.setAccountNonExpired(true);
@@ -104,9 +101,15 @@ public class SecurityController {
             user.setAuthList(Arrays.asList(Role.USER.getAuthority()));
             userService.addUser(user);
         } else {
-            throw new Exception(String.format("Username %s already exists", user.getUsername()));
+            String body = "Username %s already exists" + user.getUsername();
+            logger.error(body);
+            return new ResponseEntity(body, HttpStatus.CONFLICT);
         }
 
+        final UserDetails userdetails = myUserDetailsService.loadUserByUsername(user.getUsername());
+        final String jwt = jwtUtil.generateToken(userdetails);
+
+        return ResponseEntity.ok(jwt);
     }
 
 

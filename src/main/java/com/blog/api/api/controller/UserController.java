@@ -3,6 +3,8 @@ package com.blog.api.api.controller;
 import com.blog.api.api.model.User;
 import com.blog.api.api.service.UserService;
 import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -17,15 +19,16 @@ import java.util.Optional;
 @RestController
 public class UserController {
 
+    Logger logger = LoggerFactory.getLogger(SecurityController.class);
+
     @Autowired
     private UserService userService;
 
     @RequestMapping(value ="/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity getAllUsers(){
-        // TODO logging
-
         String content = new Gson().toJson(userService.getAll());
+        logger.info("GET - /users");
         return new ResponseEntity(content, HttpStatus.OK);
     }
 
