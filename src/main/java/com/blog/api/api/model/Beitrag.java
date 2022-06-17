@@ -14,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class Beitrag {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Expose
     private Long id;
 
