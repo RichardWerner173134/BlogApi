@@ -1,6 +1,7 @@
 package com.blog.api.api.controller;
 
 import com.blog.api.api.model.User;
+import com.blog.api.api.model.dao.UserDAO;
 import com.blog.api.api.security.AuthenticationRequest;
 import com.blog.api.api.security.JwtUtil;
 import com.blog.api.api.security.MyUserDetailsService;
@@ -10,6 +11,7 @@ import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 public class SecurityController {
@@ -57,9 +60,18 @@ public class SecurityController {
             return new ResponseEntity(HttpStatus.FORBIDDEN);
         }
 
-        final UserDetails userdetails = myUserDetailsService.loadUserByUsername(request.getUsername());
+        final User userdetails = (User)myUserDetailsService.loadUserByUsername(request.getUsername());
+
         final String jwt = jwtUtil.generateToken(userdetails);
-        final String body = new Gson().toJson(jwt);
+        AuthenticationResponse.UserData userData = new AuthenticationResponse.UserData(
+                userdetails.getUsername(),
+                userdetails.getVorname(),
+                userdetails.getNachname(),
+                "http://localhost:8080/users/" + userdetails.getUsername() + "/img");
+
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse(jwt, userData);
+
+        final String body = new Gson().toJson(authenticationResponse);
         logger.info("auth successful [" + request.getUsername() + ", " + request.getPassword() + "]");
         return ResponseEntity.ok(body);
     }
@@ -107,9 +119,19 @@ public class SecurityController {
         }
 
         final UserDetails userdetails = myUserDetailsService.loadUserByUsername(user.getUsername());
-        final String jwt = jwtUtil.generateToken(userdetails);
 
-        return ResponseEntity.ok(jwt);
+        AuthenticationResponse.UserData userData = new AuthenticationResponse.UserData(
+                user.getUsername(),
+                user.getVorname(),
+                user.getNachname(),
+                "http://localhost:8080/users/" + user.getUsername() + "/img");
+
+        final String jwt = jwtUtil.generateToken(userdetails);
+        final AuthenticationResponse authenticationResponse = new AuthenticationResponse(jwt, userData);
+
+        final String body = new Gson().toJson(authenticationResponse);
+
+        return ResponseEntity.ok(body);
     }
 
 

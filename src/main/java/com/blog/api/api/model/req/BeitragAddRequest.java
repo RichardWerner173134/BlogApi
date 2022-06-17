@@ -24,11 +24,11 @@ public class BeitragAddRequest {
     private UserService userService;
 
     public Beitrag convertToBeitrag(){
-        return new Beitrag(null,
-                title,
-                content,
-                userService.getUser(author).get(),
-                null
-        );
+        Beitrag beitrag = new Beitrag();
+        beitrag.setTitle(title);
+        beitrag.setUsername(userService.getUser(author).get());
+        beitrag.setContent(content);
+        beitrag.setViews(null);
+        return beitrag;
     }
 }

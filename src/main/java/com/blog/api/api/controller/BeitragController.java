@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -53,20 +54,18 @@ public class BeitragController {
                 .create()
                 .toJson(beitragDaoList);
 
-        return new ResponseEntity<>(body, HttpStatus.OK);
+        return new ResponseEntity<>(body, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/addBeitrag", method = RequestMethod.POST)
+    @RequestMapping(value = "/beitraege", method = RequestMethod.POST)
     public ResponseEntity addBeitrag(@Validated @RequestBody BeitragAddRequest request) {
-        logger.info(String.format("POST - /addBeitrag, \n\tauthor: %s,\n\ttitle: %s,\n\tcontent: %s,\n\tviews: %d", request.getAuthor(), request.getTitle(), request.getContent(), request.getViews()));
-        try {
-            request.setUserService(userService);
-            Beitrag beitrag = request.convertToBeitrag();
-            beitragService.addBeitrag(beitrag);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        logger.info(String.format("POST - /beitraege, \n\tauthor: %s,\n\ttitle: %s,\n\tcontent: %s,\n\tviews: %d", request.getAuthor(), request.getTitle(), request.getContent(), request.getViews()));
+
+        request.setUserService(userService);
+        Beitrag beitrag = request.convertToBeitrag();
+        beitragService.addBeitrag(beitrag);
+        return ResponseEntity.ok().build();
+
     }
 
     @RequestMapping(value = "/beitraege/{beitragId}/addView", method = RequestMethod.POST)
@@ -80,7 +79,7 @@ public class BeitragController {
             user = userService.getZeroUser();
         } else {
             Optional<User> oUser = userService.getUser(reqUsername);
-            user = oUser.isPresent() ? oUser.get() : userService.getZeroUser();
+            user = oUser.orElseGet(() -> userService.getZeroUser());
         }
 
         Beitrag beitrag = beitragService.getAllBeitraege().stream()
@@ -102,7 +101,7 @@ public class BeitragController {
 
         Optional<Beitrag> beitrag = this.beitragService.getBeitragById(beitragId);
 
-        if(!beitrag.isPresent()){
+        if(beitrag.isEmpty()){
             return ResponseEntity.noContent().build();
         }
 
