@@ -4,7 +4,8 @@ insert into blog_user (username, auth, is_account_non_expired, is_account_non_lo
 ('BlogUser112', 'user', true, true, true, true, 'Schneider', 'pw123', FILE_READ('classpath:/static/sample.jpg'), 'Beate'),
 ('BlogUser113', 'user', true, true, true, true, 'Kramer', 'pw123', FILE_READ('classpath:/static/sample.jpg'), 'Detlev'),
 ('BlogUser114', 'user', true, true, true, true, 'Obama', 'pw123', FILE_READ('classpath:/static/sample.jpg'), 'Barack'),
-('BlogUser115', 'user', true, true, true, true, 'Trump', 'pw123', FILE_READ('classpath:/static/sample.jpg'), 'Donald');
+('BlogUser115', 'user', true, true, true, true, 'Trump', 'pw123', FILE_READ('classpath:/static/sample.jpg'), 'Donald'),
+('zero_user', 'user', true, true, true, true, 'zero', 'zero', FILE_READ('classpath:/static/sample.jpg'), 'zero');
 
 insert into beitrag (id, title, content, author_id) values
 (1, 'Von Foos und Bars', 'Bar, foo baR. BarF oo FOO bAR!!!!!!!!!! Bar foo, FUU BAA Foo bAR! Bar fu Foo baR? bar bAR BAR foo foO fOo FoBaor!', 'admin'),
