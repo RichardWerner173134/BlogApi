@@ -21,6 +21,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -78,19 +81,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        Map<String, HttpMethod> excludeMap = new HashMap<>();
-        excludeMap.put("/h2-console", null);
-        excludeMap.put("/authenticate", HttpMethod.POST);
-        excludeMap.put("/register", HttpMethod.POST);
-        excludeMap.put("/users", HttpMethod.GET);
-        excludeMap.put("/beitraege", HttpMethod.GET);
+        Map<Pattern, HttpMethod> excludeMap = new HashMap<>();
+        excludeMap.put(Pattern.compile("/h2-console"), null);
+        excludeMap.put(Pattern.compile("/authenticate"), HttpMethod.POST);
+        excludeMap.put(Pattern.compile("/register"), HttpMethod.POST);
+        excludeMap.put(Pattern.compile("/users"), HttpMethod.GET);
+        excludeMap.put(Pattern.compile("/beitraege"), HttpMethod.GET);
+        excludeMap.put(Pattern.compile("/beitraege/[0-9]*/addView"), HttpMethod.POST);
 
-        String path = request.getRequestURI();
         String method = request.getMethod();
 
         return excludeMap.entrySet()
                 .stream()
-                .anyMatch(d -> path.startsWith(d.getKey())
-                        && (d.getValue() == null || method.equals(d.getValue().name())));
+                .anyMatch(d -> d.getKey().matcher(request.getRequestURI()).find() &&
+                        (d.getValue() == null || method.equals(d.getValue().name())));
     }
 }

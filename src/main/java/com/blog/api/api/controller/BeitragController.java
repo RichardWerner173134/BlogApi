@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.sql.DataSource;
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,7 +71,7 @@ public class BeitragController {
 
     @RequestMapping(value = "/beitraege/{beitragId}/addView", method = RequestMethod.POST)
     public ResponseEntity addView(@PathVariable int beitragId, @RequestBody BeitragViewIncreaseRequest request) throws Exception {
-        logger.info(String.format("POST - \n\tuser: %s,\n\tdate: %t", request.getUser(), request.getDate()));
+        logger.info(String.format("POST - /beitraege/%d/addView \n\tuser: %s,\n\tdate: %s", beitragId, request.getUser(), request.getDate().toString()));
         BeitragView beitragView = new BeitragView();
 
         String reqUsername = request.getUser();
@@ -86,7 +87,7 @@ public class BeitragController {
                 .filter(b -> b.getId() == beitragId)
                 .findFirst().get();
 
-        beitragView.setDate(request.getDate());
+        beitragView.setDate(Date.from(request.getDate()));
         beitragView.setUser(user);
         beitragView.setBeitrag(beitrag);
 
