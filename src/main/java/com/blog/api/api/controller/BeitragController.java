@@ -55,7 +55,7 @@ public class BeitragController {
                 .create()
                 .toJson(beitragDaoList);
 
-        return new ResponseEntity<>(body, HttpStatus.CREATED);
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/beitraege", method = RequestMethod.POST)
@@ -65,7 +65,7 @@ public class BeitragController {
         request.setUserService(userService);
         Beitrag beitrag = request.convertToBeitrag();
         beitragService.addBeitrag(beitrag);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(HttpStatus.CREATED);
 
     }
 
