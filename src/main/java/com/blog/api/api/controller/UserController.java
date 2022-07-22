@@ -1,6 +1,7 @@
 package com.blog.api.api.controller;
 
 import com.blog.api.api.model.User;
+import com.blog.api.api.model.dao.UserDAO;
 import com.blog.api.api.service.UserService;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
@@ -22,24 +23,34 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value ="/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<String> getAllUsers(){
-        String content = new Gson().toJson(userService.getAll());
+    public ResponseEntity<String> getAllUsers() {
+        String content = new Gson().toJson(userService.getAllUserDAOs());
         logger.info("GET - /users");
         return new ResponseEntity<>(content, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/users/{username}/img",
             method = RequestMethod.GET,
-            produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<ByteArrayResource> getProfilbild(@PathVariable String username){
-        // TODO logging
+            produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<ByteArrayResource> getProfilbild(@PathVariable String username) {
         Optional<User> user = userService.getUser(username);
-        if(user.isPresent() && user.get().getProfilBild() != null){
+        logger.info("GET - /users/" + username + "/img");
+        if (user.isPresent() && user.get().getProfilBild() != null) {
             return ResponseEntity.ok(new ByteArrayResource(user.get().getProfilBild()));
         }
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(value = "/users/{username}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<String> getUser(@PathVariable String username) {
+        String content = new Gson().toJson(userService.getUserDAO(username));
+        logger.info("GET - /users/" + username);
+        return new ResponseEntity<>(content, HttpStatus.OK);
     }
 }
