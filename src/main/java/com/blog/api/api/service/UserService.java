@@ -28,10 +28,19 @@ public class UserService {
         return userRepository.findById(user.getUsername()).isPresent();
     }
 
-    public List<UserDAO> getAll() {
+    public List<UserDAO> getAllUserDAOs() {
         return userRepository.findAll().stream()
-                .map(user -> new UserDAO(user.getUsername(), user.getVorname(), user.getNachname(), user.getProfilBild()))
+                .map(user -> new UserDAO(user.getUsername(), user.getVorname(), user.getNachname(), "http://localhost:8080/users/" + user.getUsername() + "/img"))
                 .collect(Collectors.toList());
+    }
+
+    public UserDAO getUserDAO(String username){
+        Optional<User> userO = userRepository.findById(username);
+        if(userO.isPresent()){
+            User user = userO.get();
+            return new UserDAO(user.getUsername(), user.getVorname(), user.getNachname(), "http://localhost:8080/users/" + username + "/img");
+        }
+        throw new IllegalStateException("User not found");
     }
 
     public User getZeroUser(){
