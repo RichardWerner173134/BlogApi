@@ -4,7 +4,9 @@ import com.blog.api.api.model.User;
 import com.blog.api.api.model.dao.UserDAO;
 import com.blog.api.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +42,7 @@ public class UserService {
             User user = userO.get();
             return new UserDAO(user.getUsername(), user.getVorname(), user.getNachname(), "http://localhost:8080/users/" + username + "/img");
         }
-        throw new IllegalStateException("User not found");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     public User getZeroUser(){

@@ -18,7 +18,6 @@ public class BeitragAddRequest {
     private String title;
     private String content;
     private String author;
-    private int views;
 
     @Autowired
     private UserService userService;

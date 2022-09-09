@@ -4,7 +4,7 @@ insert into blog_user (username, auth, is_account_non_expired, is_account_non_lo
 ('BlogUser112', 'user', true, true, true, true, 'Schneider', 'pw123', FILE_READ('classpath:/static/sample.jpg'), 'Beate'),
 ('BlogUser113', 'user', true, true, true, true, 'Kramer', 'pw123', FILE_READ('classpath:/static/sample.jpg'), 'Detlev'),
 ('BlogUser114', 'user', true, true, true, true, 'Obama', 'pw123', FILE_READ('classpath:/static/sample.jpg'), 'Barack'),
-('BlogUser115', 'user', true, true, true, true, 'Trump', 'pw123', FILE_READ('classpath:/static/sample.jpg'), 'Donald'),
+('BlogUser115', 'user', true, true, true, true, 'Trump', 'pw123', null, 'Donald'),
 ('zero_user', 'user', true, true, true, true, 'zero', 'zero', FILE_READ('classpath:/static/sample.jpg'), 'zero');
 
 insert into beitrag (id, title, content, author_id) values

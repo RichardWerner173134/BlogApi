@@ -1,7 +1,6 @@
 package com.blog.api.api.controller;
 
 import com.blog.api.api.model.User;
-import com.blog.api.api.model.dao.UserDAO;
 import com.blog.api.api.service.UserService;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
@@ -12,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -37,11 +37,16 @@ public class UserController {
     public ResponseEntity<ByteArrayResource> getProfilbild(@PathVariable String username) {
         Optional<User> user = userService.getUser(username);
         logger.info("GET - /users/" + username + "/img");
-        if (user.isPresent() && user.get().getProfilBild() != null) {
-            return ResponseEntity.ok(new ByteArrayResource(user.get().getProfilBild()));
+
+        if(user.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        if(user.get().getProfilBild() == null){
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT);
+        }
+
+        return ResponseEntity.ok(new ByteArrayResource(user.get().getProfilBild()));
     }
 
     @RequestMapping(value = "/users/{username}",

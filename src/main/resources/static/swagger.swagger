@@ -1,0 +1,248 @@
+swagger: "2.0"
+info:
+  description: "This defines the API from the Blog Backend"
+  version: "1.0.0"
+  title: "Swagger Blog Backend"
+host: "localhost:8080"
+schemes:
+- "http"
+paths:
+  /users:
+    get:
+      summary: "Get all users"
+      description: ""
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserResponse'
+  /users/{username}:
+    get:
+      summary: "Get user by id"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: '#/definitions/UserResponse'
+        404:
+          description: "User not found"
+    parameters:
+    - name: username
+      in: path
+      description: "username of user"
+      required: true
+      type: string
+  /users/{username}/img:
+    get:
+      summary: "Get profile image of given user"
+      produces:
+      - "image/jpg"
+      responses:
+        200:
+          description: "OK"
+        204:
+          description: "No image for user found"
+        404:
+          description: "User not found"
+    parameters:
+    - name: username
+      in: path
+      description: "username of user"
+      required: true
+      type: string
+  /beitraege:
+    get:
+      summary: "Get all beitraege"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/BeitragResponse"
+    post:
+      summary: Creates a new beitrag.
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: beitrag
+          description: The beitrag to create.
+          schema:
+            $ref: '#/definitions/BeitragAddRequest'
+      responses:
+        200:
+          description: OK
+  /beitraege/{beitragId}:
+    get:
+      summary: "Get all beitraege"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "OK"
+          schema:
+              $ref: "#/definitions/BeitragResponse"
+        404:
+          description: "Beitrag not found"
+    parameters:
+    - name: beitragId
+      in: path
+      description: "Id of beitrag"
+      required: true
+      type: integer
+  /beitraege/{beitragId}/addView:
+    post:
+      summary: Adds a new view count on given beitrag.
+      consumes:
+        - application/json
+      responses:
+        200:
+          description: OK
+    parameters:
+    - name: beitragId
+      in: path
+      description: "Id of beitrag"
+      required: true
+      type: integer
+    - name: beitragAddViewRequest
+      in: body
+      description: The beitrag to create.
+      schema:
+        $ref: '#/definitions/BeitragAddViewRequest'
+  /authenticate:
+    post:
+      summary: authenticates a matching username/password
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/AuthenticationResponse"
+        403:
+          description: wrong username/password
+    parameters:
+    - name: AuthenticationRequest
+      in: body
+      schema:
+        $ref: '#/definitions/AuthenticationRequest'
+  /register:
+    post:
+      summary: creates a new user
+      consumes:
+         - multipart/form-data
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RegistrationResponse"
+      parameters:
+      - name: "username"
+        in: formData
+        type: string
+        description: username
+      - name: "password"
+        in: formData
+        type: string
+        description: password
+      - name: "vorname"
+        in: formData
+        type: string
+        description: vorname
+      - name: "nachname"
+        in: formData
+        type: string
+        description: nachname
+      - name: "profilbild"
+        in: formData
+        type: file
+        description: profilbild
+definitions:
+  UserResponse:
+    properties:
+      author:
+        type: string
+      vorname:
+        type: string
+      nachname:
+        type: string
+      profilBild:
+        type: string
+  BeitragResponse:
+    properties:
+      id:
+        type: integer
+      title:
+        type: string
+      content:
+        type: string
+      author:
+        type: string
+      views:
+        type: integer
+  BeitragAddRequest:
+    properties:
+      title:
+        type: string
+      content:
+        type: string
+      author:
+        type: string
+  BeitragAddViewRequest:
+    properties:
+      date:
+        type: string
+        format: date-time
+      user:
+        type: string
+  AuthenticationRequest:
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+  AuthenticationResponse:
+    type: object
+    properties:
+      jwt:
+        type: string
+      userData:
+        type: object
+        properties:
+          author:
+            type: string
+          vorname:
+            type: string
+          nachname:
+            type: string
+          profilBild:
+            type: string
+  RegistrationResponse:
+    type: object
+    properties:
+      jwt:
+        type: string
+      userData:
+        type: object
+        properties:
+          author:
+            type: string
+          vorname:
+            type: string
+          nachname:
+            type: string
+          profilBild:
+            type: string

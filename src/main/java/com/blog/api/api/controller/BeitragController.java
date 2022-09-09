@@ -3,14 +3,13 @@ package com.blog.api.api.controller;
 import com.blog.api.api.model.Beitrag;
 import com.blog.api.api.model.BeitragView;
 import com.blog.api.api.model.User;
-import com.blog.api.api.model.req.BeitragAddRequest;
 import com.blog.api.api.model.dao.BeitragDAO;
+import com.blog.api.api.model.req.BeitragAddRequest;
 import com.blog.api.api.model.req.BeitragViewIncreaseRequest;
 import com.blog.api.api.service.BeitragService;
 import com.blog.api.api.service.BeitragViewService;
 import com.blog.api.api.service.UserService;
 import com.google.gson.GsonBuilder;
-import org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
 import java.sql.Date;
@@ -60,7 +59,7 @@ public class BeitragController {
 
     @RequestMapping(value = "/beitraege", method = RequestMethod.POST)
     public ResponseEntity addBeitrag(@Validated @RequestBody BeitragAddRequest request) {
-        logger.info(String.format("POST - /beitraege, \n\tauthor: %s,\n\ttitle: %s,\n\tcontent: %s,\n\tviews: %d", request.getAuthor(), request.getTitle(), request.getContent(), request.getViews()));
+        logger.info(String.format("POST - /beitraege, \n\tauthor: %s,\n\ttitle: %s,\n\tcontent: %s,\n\tviews: %d", request.getAuthor(), request.getTitle(), request.getContent(), 0));
 
         request.setUserService(userService);
         Beitrag beitrag = request.convertToBeitrag();
@@ -103,7 +102,7 @@ public class BeitragController {
         Optional<Beitrag> beitrag = this.beitragService.getBeitragById(beitragId);
 
         if(beitrag.isEmpty()){
-            return ResponseEntity.noContent().build();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
         BeitragDAO beitragDAO = BeitragDAO.convertBeitrag(beitrag.get(), beitragViewService);
