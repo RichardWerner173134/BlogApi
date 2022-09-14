@@ -62,11 +62,4 @@ public class UserController {
         logger.info("GET - /users/" + username);
         return new ResponseEntity<>(content, HttpStatus.OK);
     }
-
-    @RequestMapping(value = "/init",
-            method = RequestMethod.GET)
-    public ResponseEntity init(){
-        userService.initUserWithImage();
-        return new ResponseEntity(HttpStatus.OK);
-    }
 }

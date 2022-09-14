@@ -3,6 +3,8 @@ package com.blog.api.api.service;
 import com.blog.api.api.model.User;
 import com.blog.api.api.model.dao.UserDAO;
 import com.blog.api.api.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
+    Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -55,6 +58,7 @@ public class UserService {
         RestTemplate restTemplate = new RestTemplate();
         for(User user : all){
             if(user.getProfilBild() != null && user.getProfilBild().length == 0) {
+                logger.info("Correcting Empty image for username: " + user.getUsername());
                 byte[] img = restTemplate.getForObject("https://picsum.photos/400/600", byte[].class);
                 user.setProfilBild(img);
                 userRepository.save(user);
