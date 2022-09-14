@@ -22,8 +22,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
 import java.sql.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class BeitragController {
@@ -47,8 +47,13 @@ public class BeitragController {
     public ResponseEntity getBeitraege() {
         logger.info("GET - /beitraege");
 
-        List<Beitrag> allBeitraege = beitragService.getAllBeitraege();
-        List<BeitragDAO> beitragDaoList = BeitragDAO.convertBeitragList(allBeitraege, beitragViewService);
+        List<Beitrag> allBeitraege = beitragService.getAllBeitraege().stream()
+                .sorted((a, b) -> b.getCreationTime().compareTo(a.getCreationTime()))
+                .collect(Collectors.toList());
+
+        List<BeitragDAO> beitragDaoList = BeitragDAO.convertBeitragList(
+                allBeitraege,
+                beitragViewService);
         String body = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
                 .create()
