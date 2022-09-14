@@ -193,6 +193,9 @@ definitions:
         type: string
       views:
         type: integer
+      creationTime:
+        type: string
+        example: "2020-09-10T21:16:10.185633Z"
   BeitragAddRequest:
     properties:
       title:
