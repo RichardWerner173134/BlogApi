@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.util.Set;
 
 @Entity
@@ -25,6 +26,10 @@ public class Beitrag {
     @Expose
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String content;
+
+    @Column
+    @Expose
+    private Instant creationTime;
 
     @ManyToOne
     @Expose

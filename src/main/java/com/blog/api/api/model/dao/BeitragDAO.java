@@ -27,6 +27,8 @@ public class BeitragDAO {
     private String author;
     @Expose
     private int views;
+    @Expose
+    private String creationTime;
 
     public static List<BeitragDAO> convertBeitragList(List<Beitrag> beitragList, BeitragViewService beitragViewService){
         List<BeitragDAO> list = new ArrayList<>();
@@ -37,7 +39,8 @@ public class BeitragDAO {
                         beitrag.getTitle(),
                         beitrag.getContent(),
                         beitrag.getUsername().getUsername(),
-                        beitragViewService.getViewsForBeitrag(beitrag.getId())
+                        beitragViewService.getViewsForBeitrag(beitrag.getId()),
+                        beitrag.getCreationTime().toString()
                 ));
             } else{
                 list.add(new BeitragDAO(
@@ -45,7 +48,8 @@ public class BeitragDAO {
                         beitrag.getTitle(),
                         beitrag.getContent(),
                         "Unbekannt",
-                        beitragViewService.getViewsForBeitrag(beitrag.getId())
+                        beitragViewService.getViewsForBeitrag(beitrag.getId()),
+                        beitrag.getCreationTime().toString()
                 ));
             }
         }
@@ -58,6 +62,7 @@ public class BeitragDAO {
         beitragDao.setTitle(beitrag.getTitle());
         beitragDao.setContent(beitrag.getContent());
         beitragDao.setViews(beitragViewService.getViewsForBeitrag(beitrag.getId()));
+        beitragDao.setCreationTime(beitrag.getCreationTime().toString());
         if(beitrag.getUsername() != null){
             beitragDao.setAuthor(beitrag.getUsername().getUsername());
         } else{

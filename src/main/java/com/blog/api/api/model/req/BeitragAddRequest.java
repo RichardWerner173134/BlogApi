@@ -9,6 +9,8 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -28,6 +30,7 @@ public class BeitragAddRequest {
         beitrag.setUsername(userService.getUser(author).get());
         beitrag.setContent(content);
         beitrag.setViews(null);
+        beitrag.setCreationTime(Instant.now());
         return beitrag;
     }
 }
