@@ -1,16 +1,13 @@
 package com.blog.api.api.security;
 
-import io.jsonwebtoken.JwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -20,9 +17,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 @Component
@@ -52,7 +48,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 username = jwtUtil.extractUsername(jwt);
             }
         } catch(Exception e){
-            logger.error("JWT-Auth failed");
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return;
         }
@@ -83,6 +78,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         Map<Pattern, HttpMethod> excludeMap = new HashMap<>();
         excludeMap.put(Pattern.compile("/h2-console"), null);
+        excludeMap.put(Pattern.compile("/init"), null);
         excludeMap.put(Pattern.compile("/authenticate"), HttpMethod.POST);
         excludeMap.put(Pattern.compile("/register"), HttpMethod.POST);
         excludeMap.put(Pattern.compile("/users"), HttpMethod.GET);

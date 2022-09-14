@@ -6,6 +6,7 @@ import com.blog.api.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -47,5 +48,17 @@ public class UserService {
 
     public User getZeroUser(){
         return userRepository.findById("zero_user").get();
+    }
+
+    public void initUserWithImage(){
+        List<User> all = userRepository.findAll();
+        RestTemplate restTemplate = new RestTemplate();
+        for(User user : all){
+            if(user.getProfilBild() != null && user.getProfilBild().length == 0) {
+                byte[] img = restTemplate.getForObject("https://picsum.photos/400/600", byte[].class);
+                user.setProfilBild(img);
+                userRepository.save(user);
+            }
+        }
     }
 }
