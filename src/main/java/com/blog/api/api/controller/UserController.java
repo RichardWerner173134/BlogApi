@@ -3,7 +3,6 @@ package com.blog.api.api.controller;
 import com.blog.api.api.model.User;
 import com.blog.api.api.service.UserService;
 import com.google.gson.Gson;
-import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -36,9 +33,9 @@ public class UserController {
 
     @RequestMapping(value = "/users/{username}/img",
             method = RequestMethod.GET,
-            produces = MediaType.IMAGE_PNG_VALUE)
+            produces = MediaType.IMAGE_JPEG_VALUE)
     @ResponseBody
-    public byte[] getProfilbild(@PathVariable String username) {
+    public ResponseEntity getProfilbild(@PathVariable String username) {
         Optional<User> user = userService.getUser(username);
         logger.info("GET - /users/" + username + "/img");
         logger.info("content: " +  user.get().getProfilBild());
@@ -50,7 +47,7 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT);
         }
 
-        return user.get().getProfilBild();
+        return ResponseEntity.ok(new ByteArrayResource(user.get().getProfilBild()));
     }
 
     @RequestMapping(value = "/users/{username}",
